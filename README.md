@@ -8,7 +8,7 @@ Taste is not a list of liked items. It's a pattern of attention. Arta infers thi
 
 - **Resonance** — Underlying Themes (e.g. loss, identity, nostalgia) beat _this is like X_. Always ask: Does this feel tuned to the person?
 - **Intersectionality** — a film relates to a poem, literary piece, music and so forth, when the emotional frequencies have a shared idea
-- **Coree** — look for and value permanent artistic axioms that share a deeper relation instead of transient moods
+- **Core** — look for and value permanent artistic axioms that share a deeper relation instead of transient moods
 - **Editorial** — Echoes (validation), Counterpoints (stretching attention) and Judgement, never echo chambers or vanilla metadata lists
 
 ## Architecture
