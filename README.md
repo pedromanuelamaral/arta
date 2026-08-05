@@ -1,56 +1,25 @@
-# ÆRTA AI - Overview
+# Arta AI
+Arta AI, is a private cultural desk for cinema and literature powered by artificial intelligence. Not a generic recommendation engine. But a personal curator that learns your taste and why, thus closing the taste-discovery gap by using agentic ai, memory and emotional context to help you discover-interpret-remember artworks that matter to you
 
-[**Usage Dashboard Comparing Cerebras Vs. GPU Vs. TPU**](https://pedromanuelamaral.github.io/arta.ai/)
-
-ÆRTA AI, pronounced simply as Arta AI, is a private artificial intelligence cultural desk for cinema and literature. It is not a generic recommendation engine. It is closer to a personal editorial room: a system that learns what you have seen, what stayed with you, what failed, what wounded you, what bored you, and why.
-
-The project began from a personal desire to encounter more art that is meaningful rather than merely popular. People are moved by different forms of cinema and literature. ÆRTA tries to close the gap between taste and discovery by giving the user a set of cultural research agents that can reason across memory, works, archives, and emotional context.
-
-For the hackathon, the key claim is simple: Gemma 4 is not used as a chatbot attached to a taste profile. It is used as the main reasoning engine inside a multi-agent cultural research system.
+System sequence: Create private user taste memory from the user's cultural traces (Cinema & Literature) → Search across films, books, and articles → Retrieve supporting academic or textual evidence when a deeper answer is needed  → Produce recommendations and analysis that are user specific → Integrate user feedback.
 
 <img width="2752" height="1536" alt="info-1" src="https://github.com/pedromanuelamaral/arta.ai/blob/d468c9d6bac879a43ec2f093153a2ac23468bd45/docs/arta-visual.png" />
 
-> "One day Dostoevsky threw out the enigmatic remark: 'Beauty will save the world'. What sort of a statement is that? How could that be possible? When in bloodthirsty history did beauty ever save anyone from anything? Ennobled, uplifted, yes - but whom has it saved?" (Aleksandr Solzhenitsy)
+**Architecture**
+1. Model-agnostic with no sole provider dependency
+2. Multi-Agent Model Harness for reasoning, tool calling, context management, permissions
+3. Preference for Free tiered APIs, tools and services
+4. Private cloud storage with local only retrival
+5. Structure `mcp_server` (MCP server and tools), `brain` (orchestration, curator, critic), `surface` (frontend HTML/JS/CSS), `data` (local data), `research` (research notes and references), `logs` (runtime and logs), `docs` (core doctrine).
 
-## Operating constraints
 
-1. Gemma 4 31B on Cerebras is the primary intelligence layer for the hackathon.
-2. The system should remain model-agnostic after the hackathon. Gemma is the main brain now, but the architecture should not hard-code itself to one provider.
-3. Token use matters. Gemma should handle judgment, synthesis, multimodal interpretation, and final reasoning. Small local or open-source models can handle cheap tasks such as embedding, clustering, deduplication, and rough classification.
-4. The project should use free APIs, local tools, MCP servers, or services with generous free tiers.
-5. **Cloud-First, Local-Sync**: Raw personal data is stored in user-controlled cloud folders (Drive/iCloud). The system monitors these folders, normalizes the data locally, and provides compressed taste signals to the AI.
-6. The academic retrieval idea belongs in the core product, but as a retrieval and context pipeline, not as fine-tuning or model architecture modification.
-
-## What this is
-
-ÆRTA is a multi-agent cultural companion that helps a person discover, interpret, and remember works of art. The system has five jobs:
-
-1. Build a private taste memory from the user's cultural traces (Cinema & Literature).
-2. Search across films, books, and articles.
-3. Retrieve supporting academic or textual evidence when a deeper answer is needed.
-4. Produce recommendations and analysis that are specific to the user, not to public popularity.
-5. Record reactions so the system becomes sharper over time.
-
-The product is built around the idea that taste is not a list of liked items. Taste is a pattern of attention. ÆRTA tries to infer that pattern from viewing history, reading history, saved works, reactions, notes, and explicit feedback.
-
-## Project Summary
-This repo contains the ÆRTA AI project workspace scaffold for the Gemma 4 hackathon.
-
-Top-level folders:
-
-- `mcp_server` — Python MCP server and tool definitions
-- `brain` — orchestration, curator/critic logic
-- `surface` — frontend HTML/JS/CSS
-- `data` — local data store; `data/sqlite` for SQLite files
-- `research` — research notes and references
-- `logs` — runtime and debug logs
-- `docs` — project docs and doctrine (already present)
-
-Next steps: implement `mcp_server` tools and SQLite schema.
+Taste is not a list of liked items. It's a pattern of attention. This tries to infer that pattern from viewing history, reading history, saved works, reactions, notes, and explicit feedback.
 
 ## Why this is different
 
-Most recommendation systems optimize for engagement, similarity, or crowd behavior. ÆRTA optimizes for a more private question: what should this specific person encounter next if the goal is aesthetic growth, not consumption?
+Most recommendation systems optimize for engagement, similarity, or crowd behavior. Arta AI optimizes for a more private question: what should this specific person encounter next if the goal is aesthetic growth, not consumption?
+
+> "One day Dostoevsky threw out the enigmatic remark: 'Beauty will save the world'. What sort of a statement is that? How could that be possible? When in bloodthirsty history did beauty ever save anyone from anything? Ennobled, uplifted, yes - but whom has it saved?" (Aleksandr Solzhenitsy)
 
 That changes the design.
 
@@ -71,7 +40,7 @@ The first working version should support four flows.
 
 ### 1. Daily cultural briefing
 
-The user opens ÆRTA and receives a small, curated set of works:
+The user opens Arta AI and receives a small, curated set of works:
 
 - one film
 - one literary passage or book recommendation
@@ -80,11 +49,11 @@ The briefing is organized around a precise theme, not a broad mood label. A weak
 
 ### 2. Work analysis
 
-The user gives ÆRTA a film or book. Gemma analyzes it through the user's taste profile and, if useful, retrieves external context. The answer should avoid plot summary and generic thematic description. It should produce a thesis: what gives the work its force, what wound it circles, what formal choices matter, and why the user may or may not connect with it.
+The user gives Arta AI a film or book. Gemma analyzes it through the user's taste profile and, if useful, retrieves external context. The answer should avoid plot summary and generic thematic description. It should produce a thesis: what gives the work its force, what wound it circles, what formal choices matter, and why the user may or may not connect with it.
 
 ### 3. Cross-modal bridge
 
-The user enters one work and asks for a constellation around it. ÆRTA returns related works from other media, chosen by emotional logic or philosophical structure rather than topic matching.
+The user enters one work and asks for a constellation around it. Arta AI returns related works from other media, chosen by emotional logic or philosophical structure rather than topic matching.
 
 Example:
 
@@ -97,7 +66,7 @@ Output:
 
 ### 4. Academic retrieval mode
 
-When the user asks for deeper research, ÆRTA uses a retrieval workflow. The model should not pretend to know a book, chapter, essay, or source in detail if the evidence is not in context. It should fetch, extract, chunk, rank, compress, and inject the relevant material before answering.
+When the user asks for deeper research, Arta AI uses a retrieval workflow. The model should not pretend to know a book, chapter, essay, or source in detail if the evidence is not in context. It should fetch, extract, chunk, rank, compress, and inject the relevant material before answering.
 
 This is where the academic retrieval skill and backend MCP matter.
 
@@ -159,11 +128,11 @@ Rules:
 - If the source cannot be found or extracted, say so.
 ```
 
-This skill matters because retrieval quality beats fine-tuning for this use case. A LoRA can teach a model a habit. It cannot efficiently make the model contain a private library. ÆRTA should spend its engineering effort on evidence selection, ranking, compression, and context formatting.
+This skill matters because retrieval quality beats fine-tuning for this use case. A LoRA can teach a model a habit. It cannot efficiently make the model contain a private library. Arta AI should spend its engineering effort on evidence selection, ranking, compression, and context formatting.
 
 ## Agent architecture
 
-ÆRTA is made of small agents with clear roles. Gemma 4 is the main reasoning model that coordinates or performs the high-value steps.
+Arta AI is made of small agents with clear roles. Gemma 4 is the main reasoning model that coordinates or performs the high-value steps.
 
 ### 1. Taste Memory Agent
 
@@ -397,7 +366,7 @@ The MCP server is not the intelligence layer. It is the tool layer. Gemma remain
 ### Daily briefing prompt
 
 ```text
-You are the editorial core of ÆRTA, a private cultural desk for one person.
+You are the editorial core of Arta AI, a private cultural desk for one person.
 
 Your task is to propose a daily cultural briefing.
 
@@ -538,7 +507,7 @@ The 24-hour version should be narrow enough to finish.
 
 The demo should show one coherent story.
 
-1. The user opens ÆRTA.
+1. The user opens Arta AI.
 2. The system loads a compact private taste profile.
 3. The user asks for a daily cultural briefing.
 4. Gemma produces a film, poem, music piece, and optional image reference around a precise theme.
@@ -549,13 +518,13 @@ The demo should show one coherent story.
 9. The user asks a deeper research question.
 10. The retrieval workflow extracts and compresses textual evidence.
 11. Gemma answers with cited evidence and interpretation.
-12. The user logs a reaction, and ÆRTA updates the taste memory.
+12. The user logs a reaction, and Arta AI updates the taste memory.
 
 This proves the system is not a static recommender. It is a loop: memory, retrieval, reasoning, response, reaction, memory.
 
 ## Evaluation criteria
 
-For the hackathon, ÆRTA should be evaluated on four things.
+For the hackathon, Arta AI should be evaluated on four things.
 
 ### 1. Personal specificity
 
@@ -628,7 +597,7 @@ The post-hackathon version should grow in layers:
 - It is not a public social network.
 - It is not a replacement for human criticism.
 
-ÆRTA is a private cultural desk: memory plus retrieval plus judgment.
+Arta AI is a private cultural desk: memory plus retrieval plus judgment.
 
 ## Build priority for the next 24 hours
 
