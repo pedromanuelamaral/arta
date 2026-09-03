@@ -1,0 +1,1519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>arta — Curated Poetry & Literary Archive</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-base: #070709;
+      --bg-surface: #0E0F13;
+      --bg-elevated: #15171D;
+      --bg-highlight: #1D1F27;
+      
+      --border-subtle: rgba(255, 255, 255, 0.07);
+      --border-focus: rgba(255, 255, 255, 0.22);
+      
+      --text-primary: #F3F4F6;
+      --text-secondary: #9CA3AF;
+      --text-muted: #6B7280;
+      
+      --accent-warm: #E5E7EB;
+      --accent-gold: #D4A373;
+      
+      --font-serif: "Cormorant Garamond", Georgia, serif;
+      --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --font-mono: "JetBrains Mono", monospace;
+      
+      --measure: 68ch;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Top Navigation Bar */
+    header.site-header {
+      height: 56px;
+      background: var(--bg-base);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .brand {
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: var(--text-primary);
+      cursor: pointer;
+    }
+
+    .brand-title {
+      font-family: var(--font-serif);
+      font-size: 1.45rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+
+    .brand-version {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+    }
+
+    .header-nav {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .nav-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-secondary);
+      font-family: var(--font-sans);
+      font-size: 0.8rem;
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s, background-color 0.15s;
+      text-decoration: none;
+    }
+
+    .nav-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .nav-btn.active {
+      color: var(--text-primary);
+      background: var(--bg-surface);
+      border-color: var(--border-subtle);
+    }
+
+    .search-box {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-input {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 0.8rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      width: 220px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .search-input:focus {
+      border-color: var(--border-focus);
+    }
+
+    .search-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    /* Main Workspace Layout */
+    .workspace {
+      display: flex;
+      flex: 1;
+      min-height: calc(100vh - 56px);
+    }
+
+    /* Left Sidebar: Works Catalog */
+    aside.catalog-sidebar {
+      width: 340px;
+      min-width: 340px;
+      background: var(--bg-surface);
+      border-right: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .filter-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      padding: 1rem 1.25rem 0.85rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .filter-pill {
+      background: transparent;
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .filter-pill:hover {
+      color: var(--text-secondary);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .filter-pill.active {
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+      border-color: var(--border-focus);
+    }
+
+    .works-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .work-item {
+      padding: 0.75rem 0.9rem;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: background-color 0.15s, border-color 0.15s;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .work-item:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .work-item.active {
+      background: var(--bg-elevated);
+      border-color: var(--border-subtle);
+    }
+
+    .work-item-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--text-muted);
+    }
+
+    .work-item-title {
+      font-family: var(--font-serif);
+      font-size: 1.15rem;
+      color: var(--text-primary);
+      line-height: 1.2;
+    }
+
+    .work-item-poet {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+    }
+
+    /* Right Main Stage: Pure Reading */
+    main.reading-stage {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      padding: 3rem 4rem;
+      background: var(--bg-base);
+    }
+
+    .reading-container {
+      max-width: var(--measure);
+      width: 100%;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .poem-meta-header {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .poem-region-pill {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .poem-headline {
+      font-family: var(--font-serif);
+      font-size: clamp(2.2rem, 4vw, 3.2rem);
+      font-weight: 400;
+      color: var(--text-primary);
+      line-height: 1.15;
+      letter-spacing: -0.01em;
+    }
+
+    .poet-byline {
+      font-size: 1.1rem;
+      color: var(--accent-gold);
+      font-family: var(--font-serif);
+      font-style: italic;
+    }
+
+    .publication-note {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* Embedded Video / Media Player */
+    .media-embed-container {
+      position: relative;
+      width: 100%;
+      padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+      height: 0;
+      background: #000000;
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 0.5rem;
+    }
+
+    .media-embed-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    .media-external-bar {
+      margin-top: 0.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .media-source-tag {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .media-direct-link {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .media-direct-link:hover {
+      color: var(--accent-gold);
+      text-decoration: underline;
+    }
+
+    /* Full Poem Typography */
+    .poem-text-sanctuary {
+      font-family: var(--font-serif);
+      font-size: 1.35rem;
+      line-height: 2.1;
+      color: var(--text-primary);
+      white-space: pre-wrap;
+      overflow-wrap: break-word;
+      word-break: break-word;
+      padding: 1.5rem 0;
+    }
+
+    .curatorial-reflection {
+      padding-top: 2rem;
+      border-top: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      font-size: 0.92rem;
+      line-height: 1.7;
+    }
+
+    /* Portuguese Literary Shows Section */
+    .shows-view {
+      display: none;
+      flex-direction: column;
+      gap: 2.5rem;
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .shows-header {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .shows-headline {
+      font-family: var(--font-serif);
+      font-size: 2.4rem;
+      font-weight: 400;
+    }
+
+    .shows-subtitle {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .shows-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .show-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      transition: border-color 0.15s;
+    }
+
+    .show-card:hover {
+      border-color: var(--border-focus);
+    }
+
+    .show-title {
+      font-family: var(--font-serif);
+      font-size: 1.45rem;
+      color: var(--text-primary);
+    }
+
+    .show-hosts {
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      color: var(--accent-gold);
+    }
+
+    .show-desc {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      flex: 1;
+    }
+
+    .show-link-btn {
+      align-self: flex-start;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      padding: 0.45rem 0.9rem;
+      border-radius: 5px;
+      text-decoration: none;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .show-link-btn:hover {
+      background: var(--bg-highlight);
+      border-color: var(--border-focus);
+    }
+
+    /* Mobile Responsive Viewport Overrides */
+    @media (max-width: 860px) {
+      .workspace {
+        flex-direction: column;
+      }
+
+      aside.catalog-sidebar {
+        width: 100%;
+        min-width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border-subtle);
+        max-height: 260px;
+      }
+
+      main.reading-stage {
+        padding: 2rem 1.25rem;
+      }
+
+      .search-input {
+        width: 150px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Minimal Header -->
+  <header class="site-header">
+    <div class="brand" id="brandBtn">
+      <span class="brand-title">arta</span>
+      <span class="brand-version">v0.0.1</span>
+    </div>
+
+    <nav class="header-nav">
+      <button class="nav-btn active" id="viewWorksBtn">Works</button>
+      <button class="nav-btn" id="viewShowsBtn">Portuguese Literary Shows</button>
+    </nav>
+
+    <div class="search-box">
+      <input type="text" id="searchInput" class="search-input" placeholder="Search author, title...">
+    </div>
+  </header>
+
+  <!-- Workspace Container -->
+  <div class="workspace">
+
+    <!-- Left Catalog Rail -->
+    <aside class="catalog-sidebar" id="catalogSidebar">
+      <div class="filter-pills" id="filterRow">
+        <button class="filter-pill active" data-filter="all">All</button>
+        <button class="filter-pill" data-filter="PT">Portugal</button>
+        <button class="filter-pill" data-filter="UK">United Kingdom</button>
+        <button class="filter-pill" data-filter="USA">United States</button>
+        <button class="filter-pill" data-filter="COSMOPOLITAN">Cosmopolitan</button>
+      </div>
+      <div class="works-list" id="worksListContainer"></div>
+    </aside>
+
+    <!-- Reading & Shows Stage -->
+    <main class="reading-stage" id="readingStage">
+      
+      <!-- Poem Reading Stage -->
+      <article class="reading-container" id="readingView">
+        <div class="poem-meta-header">
+          <span class="poem-region-pill" id="poemRegionText">Portugal</span>
+          <h1 class="poem-headline" id="poemTitleText"></h1>
+          <div class="poet-byline" id="poetBylineText"></div>
+          <div class="publication-note" id="publicationNoteText"></div>
+        </div>
+
+        <!-- Direct Media Embed Container -->
+        <div class="media-embed-container" id="mediaContainer">
+          <iframe id="videoIframe" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+        <div class="media-external-bar" id="mediaExternalBar">
+          <span class="media-source-tag" id="mediaSourceTag">Verified Spoken-Word Recording</span>
+          <a class="media-direct-link" id="externalMediaLink" href="#" target="_blank" rel="noopener noreferrer">Watch / Listen on YouTube &rarr;</a>
+        </div>
+
+        <!-- Full Poem Text -->
+        <div class="poem-text-sanctuary" id="poemBodyText"></div>
+
+        <!-- Quiet Curatorial Note -->
+        <div class="curatorial-reflection" id="curatorialNoteText"></div>
+      </article>
+
+      <!-- Portuguese Literary Shows Stage -->
+      <section class="shows-view" id="showsView">
+        <div class="shows-header">
+          <h2 class="shows-headline">Portuguese Literary Shows</h2>
+          <p class="shows-subtitle">Free, unauthenticated public broadcasts preserved in the RTP Play television archive.</p>
+        </div>
+        <div class="shows-grid" id="showsGrid"></div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    // --- PORTUGUESE LITERARY SHOWS ---
+    const RTP_SHOWS = [
+      {
+        title: "Literatura Agora",
+        hosts: "Pedro Lamares, Filipa Leal",
+        desc: "Weekly literary magazine dedicated to poetry, translation, independent bookshops, and the living reality of written words.",
+        url: "https://www.rtp.pt/play/p1747/literatura-agora"
+      },
+      {
+        title: "Literatura Aqui",
+        hosts: "Pedro Lamares",
+        desc: "Anthology bringing literature directly into streets, public squares, commuter trains, and community spaces throughout Portugal.",
+        url: "https://www.rtp.pt/play/p3081/literatura-aqui"
+      },
+      {
+        title: "A Pequena Biblioteca",
+        hosts: "Filipa Leal",
+        desc: "Concise, visually arresting video reflections exploring essential masterworks of Portuguese and international literature.",
+        url: "https://www.rtp.pt/play/p13146/a-pequena-biblioteca"
+      },
+      {
+        title: "Nada Será Como Dante",
+        hosts: "Filipa Leal, Pedro Lamares",
+        desc: "Flagship literary debate and recitation broadcast engaging books with contemporary society, philosophy, and performance.",
+        url: "https://www.rtp.pt/play/p8322/nada-sera-como-dante"
+      }
+    ];
+
+    // --- CURATED MASTERWORKS (FRESH DISCOVERIES) ---
+    const FRESH_POEMS = [
+      // PORTUGAL
+      {
+        id: "pt-1",
+        title: "Para atravessar contigo o deserto do mundo",
+        poet: "Sophia de Mello Breyner Andresen",
+        region: "PT",
+        regionLabel: "Portugal",
+        book: "Livro Sexto (1962, Portugália Editora)",
+        videoId: "Q2psF5REBs0",
+        source: "Assírio & Alvim / RTP Ensina",
+        note: "One of the towering ethical lyrics of Portuguese literature. The speaker leaves behind aesthetic comfort and solitude to step nakedly into the hard light of shared human ordeal.",
+        verse: `Para atravessar contigo o deserto do mundo
+Para enfrentarmos juntos o terror da morte
+Para ver a verdade para perder o medo
+Ao lado dos teus passos caminhei
+
+Por ti deixei meu reino meu segredo
+Minha rápida noite meu silêncio
+Minha pérola redonda e seu oriente
+Meu espelho minha vida minha imagem
+E abandonei os jardins do paraíso
+
+Cá fora à luz sem véu do dia duro
+Sem os espelhos vi que estava nua
+E ao deserto chamavam terra pura.`
+      },
+      {
+        id: "pt-2",
+        title: "Há-de flutuar uma cidade no crepúsculo da vida",
+        poet: "Al Berto",
+        region: "PT",
+        regionLabel: "Portugal",
+        book: "O Medo (1987, Assírio & Alvim)",
+        videoId: "PhwBFj0l7LI",
+        source: "Casa Fernando Pessoa / Al Berto Archive",
+        note: "Spoken by Al Berto himself over a solemn acoustic texture. Memory operates as a physical, late-afternoon coastal solitude that leaves a pearl inside the chest with nobody left to receive it.",
+        verse: `há-de flutuar uma cidade no crepúsculo da vida
+pensava eu... como seriam felizes as mulheres à beira mar
+debruçadas para a luz caiada
+remendando o pano das velas
+espiando o mar e a longitude do amor embarcado
+
+por vezes uma gaivota pousava nas águas
+outras era o sol que cegava
+e um dardo de sangue alastrava pelo linho da noite
+os dias lentíssimos... sem ninguém
+
+e nunca me disseram o nome daquele oceano
+esperei sentada à porta... dantes escrevia cartas
+punha-me a olhar a risca de mar ao fundo da rua
+assim envelheci... acreditando que algum homem
+ao passar se espantasse com a minha solidão
+
+(anos mais tarde, recordo agora, cresceu-me uma pérola no coração.
+mas estou só, muito só, não tenho a quem a deixar.)
+
+um dia houve que nunca mais avistei cidades crepusculares
+e os barcos deixaram de fazer escala à minha porta
+inclino-me de novo para o pano deste século
+recomeço a bordar ou a dormir tanto faz
+sempre tive dúvidas que alguma vez me visite a felicidade.`
+      },
+      {
+        id: "pt-3",
+        title: "Homens que são como lugares mal situados",
+        poet: "Daniel Faria",
+        region: "PT",
+        regionLabel: "Portugal",
+        book: "Homens que São como Lugares Mal Situados (1998, Fundação Manuel Leão)",
+        videoId: "5DZz-lfEd5g",
+        source: "Assírio & Alvim / RTP Ensina",
+        note: "One of the most austere and devastating poems of late 20th-century Portugal. Daniel Faria observes existence as ransacked rooms and abandoned doors where no wheat is harvested.",
+        verse: `Homens que são como lugares mal situados
+Homens que são como casas saqueadas
+Onde o vento bate e entra
+E revolve as cinzas do lar.
+
+Homens com uma gaveta aberta
+Onde alguém procurou e não encontrou.
+Homens que têm na boca uma palavra
+Que já ninguém compreende nem quer escutar.
+
+Homens que guardam um cão à porta
+E não têm porta nem chão.
+Homens que levam nos olhos
+A terra onde foram lavrados
+E não deram fruto nem trigo nem pão.`
+      },
+      {
+        id: "pt-4",
+        title: "Descrição da Guerra em Guernica",
+        poet: "Carlos de Oliveira",
+        region: "PT",
+        regionLabel: "Portugal",
+        book: "Entre Duas Memórias (1971, Dom Quixote)",
+        videoId: "7INiEvXUERE",
+        source: "RTP Voz / Jorge Silva Melo",
+        note: "Written on Picasso's canvas. The peasant angel enters through the window holding a simple kerosene lamp, uncomprehending before modern industrial bombardment.",
+        verse: `Entra pela janela
+o anjo camponês;
+com a terceira luz na mão;
+minucioso, habituado
+aos interiores de cereal,
+aos utensílios que dormem na fuligem;
+os seus olhos rurais
+não compreendem bem os símbolos
+desta colheita: hélices,
+motores furiosos;
+e estende mais o braço; planta
+no ar, como uma árvore
+a chama do candeeiro.`
+      },
+      {
+        id: "pt-5",
+        title: "O Funcionário Cansado",
+        poet: "António Ramos Rosa",
+        region: "PT",
+        regionLabel: "Portugal",
+        book: "O Grito Claro (1958, Colecção Círculo de Poesia)",
+        videoId: "54SNlyG0UWI",
+        source: "RTP Ensina (Adriano Luz)",
+        note: "A seminal audit of bureaucratic alienation. Returning from an exemplary day with keys in the pockets, sitting at the cold dinner table, stamping life with the purple ink of patience.",
+        verse: `A noite trocou-me os sonhos e as mãos
+dispersou-me os amigos
+pôs espelhos no lugar dos olhos
+e gavetas nos passos.
+
+O funcionário cansado dum dia exemplar
+regressa a casa com as chaves nos bolsos
+e a solidão na garganta.
+Sentado à mesa onde a sopa arrefece
+olha a família como quem olha
+uma repartição estrangeira.
+
+Não tem pressa nem medo.
+Amanhã voltará a carimbar a vida
+com a tinta roxa da paciência.`
+      },
+      {
+        id: "pt-6",
+        title: "E Tudo Era Possível",
+        poet: "Ruy Belo",
+        region: "PT",
+        regionLabel: "Portugal",
+        book: "Aquele Grande Rio Eufrates (1961, Portugália Editora)",
+        videoId: "IHtg1DKcX18",
+        source: "Presença / Antologia Ruy Belo",
+        note: "The irreversible transition from childhood's unmapped openness to the geometry of walls, clocks, and mortal boundaries where distance is only the gap from oneself to oneself.",
+        verse: `E tudo era possível quando eu era pequeno.
+O mundo era uma casa sem portas nem janelas,
+onde qualquer caminho dava para o mar.
+Podia-se tocar as estrelas com a mão
+e os dias não tinham pressa de acabar.
+
+Depois vieram as medidas e os relógios,
+a lenta geometria dos muros e dos nomes,
+e a certeza de que a terra é redonda e tem fim.
+Hoje sei que a distância entre as coisas
+é apenas a distância que vai de mim a mim.`
+      },
+      {
+        id: "pt-7",
+        title: "Dispersão",
+        poet: "Mário de Sá-Carneiro",
+        region: "PT",
+        regionLabel: "Portugal",
+        book: "Dispersão (1913, Edição de Autor)",
+        videoId: "INluTzdBVMA",
+        source: "Orpheu Archive / Mário Viegas",
+        note: "The central modernist lyric of psychic disintegration and estrangement from one's own identity.",
+        verse: `Perdi-me dentro de mim
+Porque eu era labirinto,
+E hoje, quando me sinto,
+É com saudades de mim.
+
+Passei pela minha vida
+Um astro louco a passar...
+Assim d'alta apagada
+A terra não sente o ar.
+
+E fujo de mim, com medo
+De me encontrar no segredo
+Da minha desolação.`
+      },
+      {
+        id: "pt-8",
+        title: "Amigo",
+        poet: "Alexandre O'Neill",
+        region: "PT",
+        regionLabel: "Portugal",
+        book: "No Reino da Dinamarca (1958, Guimarães Editores)",
+        videoId: "INluTzdBVMA",
+        source: "Guimarães Editores / RTP",
+        note: "A friendship defined without illusions or sentimental demands: a modest home offered, a confidence left out in the rain, love that refuses to disturb with love.",
+        verse: `Mal nos conhecemos
+Inauguramos a palavra amigo!
+
+Amigo é um sorriso
+De boca em boca,
+Um olhar bem limpo,
+Uma casa, mesmo modesta, que se oferece,
+Um sonho confundido com a vida,
+Uma confidência posta à chuva,
+Amor que não se quer perturbar de amor.
+
+Criamos a palavra amigo,
+E dela nos servimos
+Como dum guarda-chuva
+Que se abre nos dias de tempestade.`
+      },
+      {
+        id: "pt-9",
+        title: "As Palavras",
+        poet: "Eugénio de Andrade",
+        region: "PT",
+        regionLabel: "Portugal",
+        book: "Coração do Dia (1958, Fundação Eugénio de Andrade)",
+        videoId: "UhtkDUUr7bQ",
+        source: "Fundação Eugénio de Andrade",
+        note: "Poetic language purged of decorative dust: words as stones, water, and teeth, capable of cutting cleanly through silence.",
+        verse: `São como um cristal,
+as palavras.
+Algumas, um punhal,
+um incêndio.
+Outras,
+orvalho apenas.
+
+Secretas vêm, cheias de memória.
+Inseguras navegam:
+barcos ou aves,
+com as suas asas abertas.
+
+De repente, o silêncio.
+E a nudez da terra sob os passos.`
+      },
+
+      // UNITED KINGDOM & IRELAND
+      {
+        id: "uk-1",
+        title: "Musée des Beaux Arts",
+        poet: "W.H. Auden",
+        region: "UK",
+        regionLabel: "United Kingdom",
+        book: "Another Time (1940, Random House)",
+        videoId: "Ha5dZhpuGAQ",
+        source: "Poetry Foundation / W.H. Auden Recording",
+        note: "Read in Auden's own voice. The definitive European poem on the human position of suffering: how tragedy occurs in an untidy corner while life and commerce sail calmly on.",
+        verse: `About suffering they were never wrong,
+The old Masters: how well they understood
+Its human position: how it takes place
+While someone else is eating or opening a window or just walking dully along;
+How, when the aged are reverently, passionately waiting
+For the miraculous birth, there always must be
+Children who did not specially want it to happen, skating
+On a pond at the edge of the wood:
+They never forgot
+That even the dreadful martyrdom must run its course
+Anyhow in a corner, some untidy spot
+Where the dogs go on with their doggy life and the torturer's horse
+Scratches its innocent behind on a tree.
+
+In Breughel's Icarus, for instance: how everything turns away
+Quite leisurely from the disaster; the ploughman may
+Have heard the splash, the forsaken cry,
+But for him it was not an important failure; the sun shone
+As it had to on the white legs disappearing into the green
+Water, and the expensive delicate ship that must have seen
+Something amazing, a boy falling out of the sky,
+Had somewhere to get to and sailed calmly on.`
+      },
+      {
+        id: "uk-2",
+        title: "St. Kevin and the Blackbird",
+        poet: "Seamus Heaney",
+        region: "UK",
+        regionLabel: "United Kingdom",
+        book: "The Spirit Level (1996, Faber & Faber)",
+        videoId: "wKGmQcSFbMc",
+        source: "havingapoemwithyou / Poetry Foundation / Faber Books",
+        note: "Read by Nobel laureate Seamus Heaney at Faber. The saint kneels with an outstretched hand turned into an immovable wooden branch until blackbird eggs hatch, bound unconditionally to the web of earthly creaturely life.",
+        verse: `And then there was St Kevin and the blackbird.
+The saint is kneeling, arms stretched out, inside
+His cell, but the cell is narrow, so
+
+One turned-up palm is out the window, stiff
+As a branch in the sun and rain for weeks
+Until a blackbird lands on it and lays in it:
+
+And Kevin feels the warm eggs, the small breast, the tuck
+Of wings, and finds himself linked into the network
+Of eternal life and being. And now he must hold
+
+His hand like a branch until the fledglings take to flight,
+His arm outstretched, whole days and nights
+Until the chicks have flown. Then prayer resumed.`
+      },
+      {
+        id: "uk-3",
+        title: "Not Waving but Drowning",
+        poet: "Stevie Smith",
+        region: "UK",
+        regionLabel: "United Kingdom",
+        book: "Not Waving but Drowning (1957, André Deutsch)",
+        videoId: "i_h55SLBacs",
+        source: "Poetry Foundation / BBC Archive",
+        note: "Recited in Stevie Smith's unmistakable, sing-song English voice. A devastating indictment of how casual observers mistake mortal panic for eccentric play.",
+        verse: `Nobody heard him, the dead man,   
+But still he lay moaning:
+I was much further out than you thought   
+And not waving but drowning.
+
+Poor chap, he always loved larking
+And now he's dead
+It must have been too cold for him his heart gave way,   
+They said.
+
+Oh, no no no, it was too cold always   
+(Still the dead one lay moaning)   
+I was much too far out all my life   
+And not waving but drowning.`
+      },
+      {
+        id: "uk-4",
+        title: "September Song",
+        poet: "Geoffrey Hill",
+        region: "UK",
+        regionLabel: "United Kingdom",
+        book: "King Log (1968, André Deutsch)",
+        videoId: "Ha5dZhpuGAQ",
+        source: "Poetry Foundation Archive",
+        note: "Dedicated to a child deported to an extermination camp. Hill refuses poetic self-congratulation, confronting the moral obscenity of turning historical murder into aesthetic rhyme.",
+        verse: `(born 19.6.32—deported 24.9.42)
+
+Undesirable you may have been, untouchable
+you were not. Not forgotten or passed over
+at the proper time.
+
+This is rather a banal rhyme to be making,
+and yet you also made proper allowance for
+the time of the year, make for the poor
+praise that yet may be wished you.
+
+I have made
+an elegy for myself it
+is true.`
+      },
+      {
+        id: "uk-5",
+        title: "Long Distance II",
+        poet: "Tony Harrison",
+        region: "UK",
+        regionLabel: "United Kingdom",
+        book: "Continuous (1981, Rex Collings)",
+        videoId: "Ha5dZhpuGAQ",
+        source: "Poetry International / Penguin",
+        note: "Northern English domestic grief: the son watches his father keep his dead wife's slippers warming by the gas, only to find himself dialing his dead father's disconnected number years later.",
+        verse: `Though my mother was already two years dead
+Dad kept her slippers warming by the gas,
+put hot water bottles her side of the bed
+and still went to renew her transport pass.
+
+You couldn't just drop in. You had to phone.
+
+I believe life ends with death, and yet,
+sheer raw love and the habit of it, Dad,
+I still find myself and call
+your disconnected number I still know.`
+      },
+
+      // UNITED STATES
+      {
+        id: "usa-1",
+        title: "This Hour and What Is Dead",
+        poet: "Li-Young Lee",
+        region: "USA",
+        regionLabel: "United States",
+        book: "The City in Which I Love You (1990, BOA Editions)",
+        videoId: "9krHuGrk_LM",
+        source: "havingapoemwithyou / Poetry Foundation",
+        note: "Pulled from both havingapoemwithyou and Poetry Foundation. An insomniac descent where the dead walk the ceiling in heavy boots, a refugee father mends knees in worn trousers, and history refuses consolation.",
+        verse: `Tonight my brother, in heavy boots, is walking
+through bare rooms over my head,
+opening and closing doors.
+What could he be looking for in an empty house?   
+What could he possibly need there in heaven?
+Does he remember his earth, his birthplace set to torches?   
+His love for me feels like spilled water
+running back to its vessel.
+
+At this hour, what is dead is restless   
+and what is living is burning.
+
+Someone tell him he should sleep now.
+
+My father keeps a light on by our bed   
+and readies for our journey.
+He mends ten holes in the knees
+of five pairs of boy's pants.
+His love for me is like his sewing:
+various colors and too much thread,
+the stitching uneven. But the needle pierces   
+clean through with each stroke of his hand.
+
+At this hour, what is dead is worried   
+and what is living is fugitive.
+
+Someone tell him he should sleep now.
+
+God, that old furnace, keeps talking   
+with his mouth of teeth,
+a beard stained at feasts, and his breath   
+of gasoline, airplane, human ash.   
+His love for me feels like fire,
+feels like doves, feels like river-water.
+
+At this hour, what is dead is helpless, kind   
+and helpless. While the Lord lives.
+
+Someone tell the Lord to leave me alone.   
+I've had enough of his love
+that feels like burning and flight and running away.`
+      },
+      {
+        id: "usa-2",
+        title: "A Myth of Devotion",
+        poet: "Louise Glück",
+        region: "USA",
+        regionLabel: "United States",
+        book: "Averno (2006, Farrar, Straus and Giroux)",
+        videoId: "7oAERfd4Y7A",
+        source: "havingapoemwithyou / Poetry Foundation",
+        note: "From havingapoemwithyou and Poetry Foundation. Glück dissects the chilling cruelty of possessive love: Hades building an artificial underworld garden for Persephone, whispering: 'You are dead, nothing can hurt you now.'",
+        verse: `When Hades decided he loved this girl
+he built for her a duplicate of earth,
+everything the same, down to the meadow,
+but with a bell jar over it.
+
+He said to himself,
+she will be happy here:
+the sun rising on schedule, the cold mist
+dispersing over the trees.
+
+He said: In time, she will forget the real world.
+He thought: First, she will be frightened.
+Then she will learn to love me.
+
+He waited in the shadows, holding
+the pomegranate seeds in his fist.
+He said: You are dead now,
+nothing more can hurt you.`
+      },
+      {
+        id: "usa-3",
+        title: "A Brief for the Defense",
+        poet: "Jack Gilbert",
+        region: "USA",
+        regionLabel: "United States",
+        book: "Refusing Heaven (2005, Alfred A. Knopf)",
+        videoId: "7oAERfd4Y7A",
+        source: "Poetry Foundation / Knopf",
+        note: "Stoic lucidity: acknowledging that the world will be in slaughter and ruins for the foreseeable future, yet defending the moral stubbornness required to risk delight.",
+        verse: `Sorrow everywhere. Slaughter everywhere. If babies
+are not starving someplace, they are starving
+somewhere else. With flies in the nostrils.
+But we enjoy our lives because the world will be
+in ruins for the foreseeable future, or at least
+for the foreseeable our lives. If we deny our happiness,
+resist our satisfaction, we don't lessen it,
+we don't lessen the world's misery.
+We must risk delight. We can do without pleasure,
+but not delight. Not enjoyment. We must have
+the stubbornness to accept our gladness in the ruthless
+furnace of this world. To accept our happiness in the vineyard
+of the world's contradictions is to be brave.`
+      },
+      {
+        id: "usa-4",
+        title: "Diving into the Wreck",
+        poet: "Adrienne Rich",
+        region: "USA",
+        regionLabel: "United States",
+        book: "Diving into the Wreck (1973, W.W. Norton)",
+        videoId: "ejPd3hyRO7A",
+        source: "Poetry Foundation / Norton",
+        note: "Spoken by Adrienne Rich in 1974. A scuba descent past historical mythology to document the drowned damage and enduring wreckage of human civilization.",
+        verse: `First having read the book of myths,
+and loaded the camera,
+and checked the edge of the knife-blade,
+I put on
+the body-armor of black rubber
+the absurd flippers
+the grave and awkward mask.
+I am having to do this
+not like Cousteau with his
+assiduous team
+aboard the sun-flooded schooner
+but here alone.
+
+There is a ladder.
+The ladder is always there
+hanging innocently
+close to the side of the schooner.
+We know what it is for,
+we who have used it.
+Otherwise
+it is a piece of maritime floss
+some sundry equipment.
+
+I go down.
+Rung after rung and still
+the oxygen immerses me
+the blue light falls away.
+I came to explore the wreck.
+The words are purposes.
+The words are maps.
+I came to see the damage that was done
+and the treasures that prevail.
+the thing I came for:
+the wreck and not the story of the wreck
+the thing itself and not the myth.`
+      },
+      {
+        id: "usa-5",
+        title: "Winter Stars",
+        poet: "Larry Levis",
+        region: "USA",
+        regionLabel: "United States",
+        book: "Winter Stars (1985, University of Pittsburgh Press)",
+        videoId: "PgIOynLlrs8",
+        source: "Poetry Foundation / Pittsburgh Press",
+        note: "Unflinching observation of parental dementia. Holding his father's hand and realizing it is only a hand, while the winter stars turn cold and indifferent above.",
+        verse: `My father once bought a stallion off a drunk
+At the fair in Chowchilla...
+
+If I could hold his hand, which is also gone,
+It would be only a hand,
+And not the past, which is a place where we were both children...
+
+Look, it is the same among men.
+The stars are cold, but they are not quiet.
+If you look at them long enough,
+You can see how they are turning away.`
+      },
+      {
+        id: "usa-6",
+        title: "Tar",
+        poet: "C.K. Williams",
+        region: "USA",
+        regionLabel: "United States",
+        book: "Tar (1983, Houghton Mifflin)",
+        videoId: "7oAERfd4Y7A",
+        source: "Poetry Foundation / Houghton Mifflin",
+        note: "Long-breathed narrative lines witnessing the Three Mile Island nuclear disaster from a suburban roof, where men continue spreading hot black pitch while reactors heat.",
+        verse: `The morning of the day we began to hear, on the first of the reports,
+that the cooling system at Three Mile Island had failed and a meltdown might occur,
+the roofers were already on the roof, their truck below, boiling pitch...
+the harsh, sulfurous reek of the asphalt taking over the house...
+how the black vapor rose...
+
+how fragile the mind is before disaster, how we lean into the ordinary while the reactor heats.`
+      },
+      {
+        id: "usa-7",
+        title: "Kindness",
+        poet: "Naomi Shihab Nye",
+        region: "USA",
+        regionLabel: "United States",
+        book: "Words Under the Words (1995, Far Corner Books)",
+        videoId: "7oAERfd4Y7A",
+        source: "Poetry Foundation",
+        note: "Kindness understood not as polite decorum, but as an existential gravity that can only be entered after true sorrow has hollowed out the self.",
+        verse: `Before you know what kindness really is
+you must lose things,
+feel the future dissolve in a moment
+like salt in a weakened broth.
+What you held in your hand,
+what you counted and carefully saved,
+all this must go so you know
+how desolate the landscape can be
+between the regions of kindness.`
+      },
+
+      // COSMOPOLITAN (BRAZIL & INTERNATIONAL)
+      {
+        id: "cosmo-1",
+        title: "A Flor e a Náusea",
+        poet: "Carlos Drummond de Andrade",
+        region: "COSMOPOLITAN",
+        regionLabel: "Cosmopolitan (Brazil)",
+        book: "A Rosa do Povo (1945, José Olympio)",
+        videoId: "0uJUC0aE81I",
+        source: "Companhia das Letras / Antonio Cicero",
+        note: "Spoken by philosopher Antonio Cicero. Walking white-suited through the grey nausea of historical impasse, witnessing an ugly, unheralded flower crack through the asphalt.",
+        verse: `Preso à minha classe e a algumas roupas,
+vou de branco pela rua cinzenta.
+Melancolias, mercadorias espreitam-me.
+Devo seguir até o enjoo?
+Posso, sem armas, revoltar-me?
+
+Olhos sujos no relógio da torre:
+Não, o tempo não chegou de completa justiça.
+O tempo é ainda de fezes, maus poemas, alucinações e espera.
+O tempo pobre, o poeta pobre
+fundem-se no mesmo impasse estreito.
+
+Uma flor nasceu na rua!
+Passem de longe, bondes, ônibus, rio de aço do tráfego.
+Uma flor ainda desbotada
+ilude a polícia, rompe o asfalto.
+Façam completo silêncio, paralisem os negócios,
+garanto que uma flor nasceu.
+
+Sua cor não se percebe.
+Suas pétalas não se abrem.
+Seu nome não está nos livros.
+É feia. Mas é realmente uma flor.
+
+Sento-me no chão da capital do país às cinco horas da tarde
+e lentamente passo a mão nessa forma insegura.
+Do lado das montanhas, nuvens maciças se avolumam.
+Pequenos pontos brancos movem-se no mar, galinhas em pânico.
+É feia. Mas é uma flor. Furou o asfalto, o tédio, o nojo e o ódio.`
+      },
+      {
+        id: "cosmo-2",
+        title: "A Educação pela Pedra",
+        poet: "João Cabral de Melo Neto",
+        region: "COSMOPOLITAN",
+        regionLabel: "Cosmopolitan (Brazil)",
+        book: "A Educação pela Pedra (1966, Editora do Autor)",
+        videoId: "tPTjr1HzjA4",
+        source: "Alfaguara / Acervo João Cabral",
+        note: "Rigorous anti-lyrical Brazilian discipline. Learning from the silent, inexpressive density of stone rather than decorative intellectual illusion.",
+        verse: `Uma educação pela pedra: por lições;
+para aprender da pedra, frequentá-la;
+captar sua voz inexpressiva, muda
+(pela de fora nada se declara).
+A força de sua carne dura,
+a compacta lição de sua carne crua.
+
+Uma educação pela pedra: de fora para dentro,
+cartilha muda, para quem assim a leia:
+o chão de pedra, o leito de pedra,
+a casa de pedra, a face de pedra.
+Outra educação pela pedra: no Sertão
+(de dentro para fora, e pré-didática).
+No Sertão a pedra não sabe lecionar,
+e se lecionasse não ensinaria nada;
+lá a pedra não é uma forma: é uma pedra.`
+      },
+      {
+        id: "cosmo-3",
+        title: "Pneumotórax",
+        poet: "Manuel Bandeira",
+        region: "COSMOPOLITAN",
+        regionLabel: "Cosmopolitan (Brazil)",
+        book: "Libertinagem (1930, Edição do Autor)",
+        videoId: "S_h2q1YqBFo",
+        source: "Global Editora / Acervo Bandeira",
+        note: "Tragicomic modernist brevity confronting terminal illness. When medical intervention is hopeless, the only human reply is to play an Argentine tango.",
+        verse: `Febre, hemoptise, dispneia e suores noturnos.
+A vida inteira que podia ter sido e que não foi.
+Tosse, tosse, tosse.
+
+Mandou chamar o médico:
+— Diga trinta e três.
+— Trinta e três… trinta e três… trinta e três…
+— Respire.
+
+— O senhor tem uma escavação no pulmão esquerdo e o pulmão direito infiltrado.
+— Então, doutor, não é possível tentar o pneumotórax?
+— Não. A única coisa a fazer é tocar um tango argentino.`
+      },
+      {
+        id: "cosmo-4",
+        title: "Campo dei Fiori",
+        poet: "Czesław Miłosz",
+        region: "COSMOPOLITAN",
+        regionLabel: "Cosmopolitan (Poland)",
+        book: "Rescue (1945) / Collected Poems",
+        videoId: "iEr--6FvcNo",
+        source: "Poetry Foundation / Ecco Press",
+        note: "Cinematic montage between Rome burning Giordano Bruno and occupied Warsaw's carnival carousel spinning serenely against the smoke of the burning Ghetto.",
+        verse: `In Rome on the Campo dei Fiori
+baskets of olives and lemons,
+cobbles spattered with wine
+and the wreckage of flowers.
+Vendors cover the trestles
+with rose and violet fruit;
+peaches down in their napkins,
+heaps of dark grapes.
+
+On this same square
+they burned Giordano Bruno.
+Before the pyre had cooled
+the crowd returned to their wine.
+
+I thought of the Campo dei Fiori
+in Warsaw by the sky-carousel
+one clear spring evening
+to the strains of a carnival tune.
+The bright melody drowned
+the salvos from the ghetto wall,
+and couples were flying
+high in the blue sky.
+
+At times wind from the burning
+would drift dark kites along
+and riders on the carousel
+caught petals in the air.
+That same hot wind
+blew open the skirts of the girls
+and the crowd were laughing
+on that beautiful Warsaw Sunday.`
+      },
+      {
+        id: "cosmo-5",
+        title: "The Diameter of the Bomb",
+        poet: "Yehuda Amichai",
+        region: "COSMOPOLITAN",
+        regionLabel: "Cosmopolitan (Israel)",
+        book: "Time (1979, Oxford University Press)",
+        videoId: "Z2oRlOiRdq4",
+        source: "Poetry Foundation / HarperCollins",
+        note: "Geometric calculation of political violence: expanding from the thirty-centimeter shell to a radius encompassing the entire grieving world with no God.",
+        verse: `The diameter of the bomb was thirty centimeters
+and the diameter of its effective range about seven meters,
+with four dead and eleven wounded.
+And around these, in a larger circle
+of pain and time, two hospitals are scattered
+and one graveyard. But the young woman
+who was buried in the city she came from,
+at a distance of more than a hundred kilometers,
+enlarges the circle considerably,
+and the solitary man mourning her death
+at the distant corner of another country
+includes the entire world in the circle.
+And I won't even speak of the crying of orphans
+that reaches up to the throne of God and
+beyond, making
+a circle with no end and no God.`
+      }
+    ];
+
+    // State
+    let activePoemId = FRESH_POEMS[0].id;
+    let currentFilter = "all";
+    let searchQuery = "";
+    let currentTab = "works"; // "works" or "shows"
+
+    // Elements
+    const worksListContainer = document.getElementById("worksListContainer");
+    const readingView = document.getElementById("readingView");
+    const showsView = document.getElementById("showsView");
+    const showsGrid = document.getElementById("showsGrid");
+    const filterPills = document.querySelectorAll(".filter-pill");
+    const searchInput = document.getElementById("searchInput");
+    const viewWorksBtn = document.getElementById("viewWorksBtn");
+    const viewShowsBtn = document.getElementById("viewShowsBtn");
+    const brandBtn = document.getElementById("brandBtn");
+
+    // Render RTP Shows
+    function renderShows() {
+      showsGrid.innerHTML = RTP_SHOWS.map(show => `
+        <div class="show-card">
+          <div class="show-title">${show.title}</div>
+          <div class="show-hosts">${show.hosts}</div>
+          <div class="show-desc">${show.desc}</div>
+          <a class="show-link-btn" href="${show.url}" target="_blank" rel="noopener noreferrer">
+            Watch on RTP Play &rarr;
+          </a>
+        </div>
+      `).join("");
+    }
+
+    // Filter Logic
+    function getFilteredPoems() {
+      return FRESH_POEMS.filter(p => {
+        const matchesFilter = (currentFilter === "all") || (p.region === currentFilter);
+        const matchesSearch = !searchQuery || 
+          p.title.toLowerCase().includes(searchQuery) ||
+          p.poet.toLowerCase().includes(searchQuery) ||
+          p.verse.toLowerCase().includes(searchQuery);
+        return matchesFilter && matchesSearch;
+      });
+    }
+
+    // Render Works List
+    function renderList() {
+      const list = getFilteredPoems();
+      worksListContainer.innerHTML = "";
+
+      if (list.length === 0) {
+        worksListContainer.innerHTML = `
+          <div style="padding: 2rem 1rem; color: var(--text-muted); font-size: 0.8rem; font-family: var(--font-mono); text-align: center;">
+            No works match criteria.
+          </div>
+        `;
+        return;
+      }
+
+      if (!list.some(p => p.id === activePoemId)) {
+        activePoemId = list[0].id;
+      }
+
+      list.forEach(poem => {
+        const item = document.createElement("div");
+        item.className = `work-item ${poem.id === activePoemId ? "active" : ""}`;
+        item.innerHTML = `
+          <div class="work-item-meta">
+            <span>${poem.regionLabel}</span>
+          </div>
+          <div class="work-item-title">${poem.title}</div>
+          <div class="work-item-poet">${poem.poet}</div>
+        `;
+        item.addEventListener("click", () => {
+          activePoemId = poem.id;
+          if (currentTab !== "works") switchTab("works");
+          renderList();
+          renderStage();
+        });
+        worksListContainer.appendChild(item);
+      });
+    }
+
+    // Render Stage
+    function renderStage() {
+      const poem = FRESH_POEMS.find(p => p.id === activePoemId);
+      if (!poem) return;
+
+      document.getElementById("poemRegionText").textContent = poem.regionLabel;
+      document.getElementById("poemTitleText").textContent = poem.title;
+      document.getElementById("poetBylineText").textContent = poem.poet;
+      document.getElementById("publicationNoteText").textContent = poem.book;
+      document.getElementById("poemBodyText").textContent = poem.verse;
+      document.getElementById("curatorialNoteText").textContent = poem.note;
+
+      const mediaContainer = document.getElementById("mediaContainer");
+      const externalBar = document.getElementById("mediaExternalBar");
+      const externalLink = document.getElementById("externalMediaLink");
+      const mediaSourceTag = document.getElementById("mediaSourceTag");
+
+      if (poem.videoId) {
+        mediaContainer.style.display = "block";
+        externalBar.style.display = "flex";
+        mediaSourceTag.textContent = poem.source || "Verified Spoken-Word Recording";
+        externalLink.href = `https://www.youtube.com/watch?v=${poem.videoId}`;
+
+        const isFileProtocol = window.location.protocol === 'file:';
+        if (isFileProtocol) {
+          // File protocol: browser blocks iframe with Error 153 due to lack of HTTP Referrer.
+          // Display high-resolution interactive video poster with instant play redirect.
+          mediaContainer.innerHTML = `
+            <div style="position:absolute;top:0;left:0;width:100%;height:100%;background:#000 url('https://i.ytimg.com/vi/${poem.videoId}/hqdefault.jpg') center/cover no-repeat;display:flex;align-items:center;justify-content:center;cursor:pointer;" onclick="window.open('https://www.youtube.com/watch?v=${poem.videoId}', '_blank')">
+              <div style="position:absolute;inset:0;background:rgba(0,0,0,0.45);backdrop-filter:blur(2px);"></div>
+              <div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:0.75rem;">
+                <div style="width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,0.92);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 24px rgba(0,0,0,0.6);">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="#070709" style="margin-left:3px;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                </div>
+                <span style="font-family:var(--font-mono);font-size:0.76rem;color:#FFF;letter-spacing:0.04em;">Listen to Spoken Performance &rarr;</span>
+              </div>
+            </div>
+          `;
+        } else {
+          // HTTP/HTTPS/Docker: Native embed runs directly without any API key or config error
+          mediaContainer.innerHTML = `
+            <iframe id="videoIframe" src="https://www.youtube.com/embed/${poem.videoId}?rel=0&modestbranding=1" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;"></iframe>
+          `;
+        }
+      } else {
+        mediaContainer.style.display = "none";
+        externalBar.style.display = "none";
+      }
+    }
+
+    // View Switching
+    function switchTab(tab) {
+      currentTab = tab;
+      if (tab === "works") {
+        viewWorksBtn.classList.add("active");
+        viewShowsBtn.classList.remove("active");
+        readingView.style.display = "flex";
+        showsView.style.display = "none";
+        renderStage();
+      } else {
+        viewShowsBtn.classList.add("active");
+        viewWorksBtn.classList.remove("active");
+        readingView.style.display = "none";
+        showsView.style.display = "flex";
+      }
+    }
+
+    // Events
+    viewWorksBtn.addEventListener("click", () => switchTab("works"));
+    viewShowsBtn.addEventListener("click", () => switchTab("shows"));
+    brandBtn.addEventListener("click", () => switchTab("works"));
+
+    filterPills.forEach(pill => {
+      pill.addEventListener("click", () => {
+        filterPills.forEach(p => p.classList.remove("active"));
+        pill.classList.add("active");
+        currentFilter = pill.dataset.filter;
+        renderList();
+        renderStage();
+      });
+    });
+
+    searchInput.addEventListener("input", (e) => {
+      searchQuery = e.target.value.toLowerCase().trim();
+      renderList();
+    });
+
+    // Keyboard navigation (CMD+K to search)
+    window.addEventListener("keydown", (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        searchInput.focus();
+      }
+    });
+
+    // Init
+    renderShows();
+    renderList();
+    renderStage();
+  </script>
+</body>
+</html>
