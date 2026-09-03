@@ -28,10 +28,10 @@ jobs:
         uses: actions/configure-pages@v4
 
       - name: Build _site
-        run: |
+      - run: |
           mkdir -p _site
           touch _site/.nojekyll
-          cp arta/tree/main/index.html _site/index.html
+          cp main/index.html _site/index.html
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
